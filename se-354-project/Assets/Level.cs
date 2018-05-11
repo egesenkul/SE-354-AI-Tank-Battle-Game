@@ -277,11 +277,11 @@ public class Level : MonoBehaviour {
 		kameraSure = Time.time;
 		kameraIdx = 0;
 		LoadMap();
-		//LoadPlayers();
-	//	ps = GameObject.FindGameObjectsWithTag("Player");
+		LoadPlayers();
+		ps = GameObject.FindGameObjectsWithTag("Player");
 		sure = 310;
 		kameraScript = kamera.GetComponent<Kamera>();
-//		kameraScript.tank = ps[kameraIdx].transform;
+		kameraScript.tank = ps[kameraIdx].transform;
 	}
 	
 	// Update is called once per frame
@@ -290,9 +290,9 @@ public class Level : MonoBehaviour {
 			Time.timeScale = 0;
 		}
 		// Debug.Log (Time.time - kameraSure);
-	//		if (Time.time - kameraSure > 10 || !ps[kameraIdx].activeSelf) {
-			//nextTank();
-	//	}
+		if (Time.time - kameraSure > 10 || !ps[kameraIdx].activeSelf) {
+			nextTank();
+		}
 		
 		// loop through and spawn if necessary
 		for(int i=0;i<weaponSpawns.Count;i++) {
@@ -307,7 +307,15 @@ public class Level : MonoBehaviour {
 			}
 		}
 		
-	
+		for(int i=0;i<ps.Length;i++) {
+			if(!ps[i].activeSelf && 
+				(Time.time - ps[i].GetComponent<AITankScript>().getDisTime()) > 5) {
+				ps[i].transform.position = playerSpawns[spidx%playerSpawns.Count];
+				ps[i].GetComponent<AITankScript>().ClearValues();
+				ps[i].SetActive(true);
+				spidx++;
+			} 
+		}
 	}
 	
 	void nextTank() {
@@ -315,10 +323,10 @@ public class Level : MonoBehaviour {
 		kameraScript.tank = ps[kameraIdx].transform;
 		kameraSure = Time.time;
 	}
-/*
+	
 	void OnGUI() {
 		string display = "";
-	for(int i=0;i<ps.Length;i++) {
+		for(int i=0;i<ps.Length;i++) {
 			AITankScript temp = ps[i].GetComponent<AITankScript>();
 			display += temp.playername + " (" + temp.getHealth() + ", " + temp.getArmour() + "): " + temp.getPuan() + "\n";
 		}
@@ -326,15 +334,11 @@ public class Level : MonoBehaviour {
 		display += "Camera is following: " + ps[kameraIdx].GetComponent<AITankScript>().playername;
 		GUI.Label(new Rect(5, 5, 200, 400), display);
 	}
-*/
+	
 	public int[,] getMap() { return map; }
 	
 	void LoadPlayers() {
-		if(players.Count > playerSpawns.Count) {
-			Debug.LogError("More players than spawn points :(");
-			return;
-		}
-		for(int i=0;i<players.Count;i++) {
+		for(int i=0;i<1;i++) {
 			GameObject player = (GameObject) Instantiate(players[i], playerSpawns[2*i+1], Quaternion.identity);
 			player.tag = "Player";
 			//player.GetComponent<AITankScript>().playername = "Player" + i;
