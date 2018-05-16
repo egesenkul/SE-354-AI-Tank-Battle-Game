@@ -338,7 +338,7 @@ public class Level : MonoBehaviour {
 	public int[,] getMap() { return map; }
 	
 	void LoadPlayers() {
-		for(int i=0;i<1;i++) {
+		for(int i=0;i<4;i++) {
 			GameObject player = (GameObject) Instantiate(players[i], playerSpawns[2*i+1], Quaternion.identity);
 			player.tag = "Player";
 			//player.GetComponent<AITankScript>().playername = "Player" + i;
